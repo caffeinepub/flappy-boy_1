@@ -1,39 +1,49 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T21:01:44.514Z",
+  "generatedAt": "2026-03-01T21:16:41.980Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Add a one-shot score-10 easter egg with street-art overlay matching the existing score-5 and score-15 milestone style",
+        "id": "REQ-14",
+        "summary": "Restore the player character as a 3D boy rendered using React Three Fiber / Three.js inside the game canvas. The boy should be a dark-skinned character facing right, with a flapping animation triggered on jump. The character must replace any placeholder or missing player rendering currently in Game.tsx.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useGameState.ts",
-          "frontend/src/components/GameUI.tsx"
+          "frontend/src/components/Game.tsx",
+          "frontend/src/components/BoyCharacter.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useGameState.ts",
-          "frontend/src/components/GameUI.tsx"
+          "frontend/src/components/Game.tsx",
+          "frontend/src/components/BoyCharacter.tsx"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Restore the standard Flappy Bird-style vertical pipe obstacles: each obstacle pair consists of a top rectangular column extending downward from the top of the canvas and a bottom rectangular column extending upward from the bottom, with a gap between them. The pipes should be visually styled as solid, classic green Flappy Bird pipes (with a cap/lip at the open end) and scroll from right to left. Collision detection must match the pipe bounding boxes. The negative comment text displayed on the columns (from the existing pipe-column feature) should be retained.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Game.tsx",
+          "frontend/src/hooks/useGameState.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Game.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/BoyCharacter.tsx",
     "frontend/src/components/Game.tsx",
-    "frontend/src/components/GameUI.tsx",
-    "frontend/src/hooks/useGameState.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

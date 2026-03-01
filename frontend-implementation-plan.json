@@ -1,28 +1,51 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add score-10 easter egg milestone overlay",
+  "title": "Re-add normal pipe obstacles and 3D boy player character",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Add a one-shot score-10 easter egg with street-art overlay matching the existing score-5 and score-15 milestone style",
+      "id": "REQ-14",
+      "summary": "Restore the player character as a 3D boy rendered using React Three Fiber / Three.js inside the game canvas. The boy should be a dark-skinned character facing right, with a flapping animation triggered on jump.",
       "acceptanceCriteria": [
-        "When the player reaches score 10 for the first time in a game session, a street-art-style overlay appears.",
-        "The easter egg fires only once per game session, not on subsequent score-10 occurrences.",
-        "The overlay visual style matches the existing score-5 and score-15 easter eggs.",
-        "Game slows down momentarily when the easter egg triggers, matching existing behavior.",
-        "No files listed in frontend.immutablePaths are modified."
+        "The player character is rendered as a 3D boy model or Three.js mesh composite visible on the canvas at all times during gameplay.",
+        "The boy faces right and plays a visible flap/jump animation when the player taps or clicks.",
+        "The character falls with gravity and rises on flap input, consistent with existing physics in useGameState.ts.",
+        "No placeholder shape (e.g., a plain rectangle or circle) is used for the player."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useGameState.ts",
+          "path": "frontend/src/components/Game.tsx",
           "operation": "modify",
-          "description": "Add score10EasterEgg state flag, initialize it to false in resetGame, and add a one-shot trigger when score reaches 10 that sets the flag to true and applies the same slowdown effect (gameSpeed *= 0.3) used by score-5 and score-15 easter eggs."
+          "description": "Replace the current 2D canvas player rendering with React Three Fiber Canvas integration. Add a Canvas component from @react-three/fiber that renders the 3D boy character at the player's position from useGameState. The Three.js scene should overlay or integrate with the existing 2D background canvas. Wire the player's y-position and flap state from useGameState into the 3D boy component props."
         },
         {
-          "path": "frontend/src/components/GameUI.tsx",
+          "path": "frontend/src/components/BoyCharacter.tsx",
+          "operation": "create",
+          "description": "Create a new React Three Fiber component that renders a 3D boy character using Three.js primitives (BoxGeometry, SphereGeometry, CylinderGeometry). The boy should be a composite mesh with a dark skin tone (e.g., brown/tan materials), facing right along the positive X-axis. Implement a flapping animation using useFrame that triggers when the 'isFlapping' prop is true, animating arm rotation or a simple scale bounce. Accept props for position and flapping state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Restore the standard Flappy Bird-style vertical pipe obstacles with classic green styling, caps/lips, and scrolling motion. Collision detection must use pipe bounding boxes, and negative comment text from negativeComments.ts must remain visible on the pipes.",
+      "acceptanceCriteria": [
+        "Obstacle pairs render as two vertical rectangular pipe columns — one descending from the top, one rising from the bottom — with a visible gap in the middle.",
+        "Pipes have a classic Flappy Bird appearance with a wider cap/lip at the open end.",
+        "Pipes scroll continuously from right to left at game speed.",
+        "Collision detection uses the pipe column bounding boxes, not speech bubble shapes.",
+        "Negative comment text from negativeComments.ts is still visible on or within each pipe column.",
+        "The wide gap introduced by the previous accessibility feature is preserved."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Game.tsx",
           "operation": "modify",
-          "description": "Add a new conditional street-art overlay section that displays when score10EasterEgg is true, using the same visual structure, Tailwind classes, and typography styles as the existing score-5 and score-15 easter egg overlays."
+          "description": "Update the obstacle rendering logic in the canvas draw loop to render each obstacle as two vertical rectangular pipe columns (top and bottom) with classic Flappy Bird green styling (#4EC853 or similar). Draw a wider rectangular cap/lip at the open end of each pipe column. Replace any speech-bubble or non-rectangular obstacle rendering with solid vertical rectangles. Render the negative comment text from obstacle.comment centered on each pipe column using fillText. Ensure pipes scroll from right to left using the obstacle x-position from useGameState."
+        },
+        {
+          "path": "frontend/src/hooks/useGameState.ts",
+          "operation": "modify",
+          "description": "Update the collision detection logic to use rectangular bounding box checks for the pipe columns instead of any speech-bubble or circular collision shapes. Each obstacle should define top and bottom pipe rectangles with x, y, width, and height bounds. Check if the player's bounding box intersects either the top or bottom pipe rectangle. Preserve the wide gap size and all four easter egg triggers (scores 5, 10, 15, 17)."
         }
       ]
     }

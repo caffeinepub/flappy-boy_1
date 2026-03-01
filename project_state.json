@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 19,
+  "projectStateVersion": 23,
   "summary": "Recreate Flappy Bird with a dark-skinned boy character instead of the bird, and negative comment bubbles instead of green pipes.",
   "architectural_notes": [],
   "known_issues": [
@@ -87,6 +87,30 @@
         "REQ-12"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-when-the-player-s-score-reaches-exactly-17-slow-the-game-speed-to-near-zero-crawl-for-5-seconds-and-display-the-text-looks-like-im-going-to-have-to-make-this-hard-for-you-prominently-across-the-screen-as-a-full-width-overlay-in-the-same-street-art-style-used-by-the-score-5-score-10-and-score-15-easter-eggs-after-5-seconds-the-game-speed-should-resume-to-normal-and-the-overlay-should-disappear-this-is-an-intentional-one-shot-feature-mirroring-the-existing-easter-eggs-implemented-in-usegamestate-ts-and-gameui-tsx",
+      "title": "When the player's score reaches exactly 17, slow the game speed to near-zero (crawl) for 5 seconds and display the text 'looks like im going to have to make this hard for you' prominently across the screen as a full-width overlay in the same street-art style used by the score-5, score-10, and score-15 easter eggs. After 5 seconds, the game speed should resume to normal and the overlay should disappear. This is an intentional one-shot feature mirroring the existing easter eggs implemented in useGameState.ts and GameUI.tsx.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-player-character-as-a-3d-boy-rendered-using-react-three-fiber-three-js-inside-the-game-canvas-the-boy-should-be-a-dark-skinned-character-facing-right-with-a-flapping-animation-triggered-on-jump-the-character-must-replace-any-placeholder-or-missing-player-rendering-currently-in-game-tsx",
+      "title": "Restore the player character as a 3D boy rendered using React Three Fiber / Three.js inside the game canvas. The boy should be a dark-skinned character facing right, with a flapping animation triggered on jump. The character must replace any placeholder or missing player rendering currently in Game.tsx.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-standard-flappy-bird-style-vertical-pipe-obstacles-each-obstacle-pair-consists-of-a-top-rectangular-column-extending-downward-from-the-top-of-the-canvas-and-a-bottom-rectangular-column-extending-upward-from-the-bottom-with-a-gap-between-them-the-pipes-should-be-visually-styled-as-solid-classic-green-flappy-bird-pipes-with-a-cap-lip-at-the-open-end-and-scroll-from-right-to-left-collision-detection-must-match-the-pipe-bounding-boxes-the-negative-comment-text-displayed-on-the-columns-from-the-existing-pipe-column-feature-should-be-retained",
+      "title": "Restore the standard Flappy Bird-style vertical pipe obstacles: each obstacle pair consists of a top rectangular column extending downward from the top of the canvas and a bottom rectangular column extending upward from the bottom, with a gap between them. The pipes should be visually styled as solid, classic green Flappy Bird pipes (with a cap/lip at the open end) and scroll from right to left. Collision detection must match the pipe bounding boxes. The negative comment text displayed on the columns (from the existing pipe-column feature) should be retained.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -151,6 +175,24 @@
     {
       "id": "AR-14",
       "summary": "At score 10, slow the game to a near-zero crawl for 5 seconds and display the text 'HOW ARE YOU STILL GOING?' prominently across the screen as a full-width overlay. After 5 seconds, resume normal speed and hide the overlay.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "At score 17, slow the game to a near-zero crawl for 5 seconds and display the text 'looks like im going to have to make this hard for you' prominently across the screen as a full-width overlay. After 5 seconds, resume normal speed and hide the overlay.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Re-add the normal Flappy Bird-style pipe obstacles (standard vertical pipe columns scrolling from right to left).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Re-add the 3D boy player character to the game.",
       "reqIds": [],
       "status": "pending"
     }

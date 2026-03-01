@@ -1,4 +1,42 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-restore-the-player-character-as-a-3d-boy-rendered-using-react-three-fiber-three-js-inside-the-game-canvas-the-boy-should-be-a-dark-skinned-character-facing-right-with-a-flapping-animation-triggered-on-jump-the-character-must-replace-any-placeholder-or-missing-player-rendering-currently-in-game-tsx",
+      "featureTitle": "Restore the player character as a 3D boy rendered using React Three Fiber / Three.js inside the game canvas. The boy should be a dark-skinned character facing right, with a flapping animation triggered on jump. The character must replace any placeholder or missing player rendering currently in Game.tsx.",
+      "files": [
+        "frontend/src/components/BoyCharacter.tsx",
+        "frontend/src/components/Game.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-the-standard-flappy-bird-style-vertical-pipe-obstacles-each-obstacle-pair-consists-of-a-top-rectangular-column-extending-downward-from-the-top-of-the-canvas-and-a-bottom-rectangular-column-extending-upward-from-the-bottom-with-a-gap-between-them-the-pipes-should-be-visually-styled-as-solid-classic-green-flappy-bird-pipes-with-a-cap-lip-at-the-open-end-and-scroll-from-right-to-left-collision-detection-must-match-the-pipe-bounding-boxes-the-negative-comment-text-displayed-on-the-columns-from-the-existing-pipe-column-feature-should-be-retained",
+      "featureTitle": "Restore the standard Flappy Bird-style vertical pipe obstacles: each obstacle pair consists of a top rectangular column extending downward from the top of the canvas and a bottom rectangular column extending upward from the bottom, with a gap between them. The pipes should be visually styled as solid, classic green Flappy Bird pipes (with a cap/lip at the open end) and scroll from right to left. Collision detection must match the pipe bounding boxes. The negative comment text displayed on the columns (from the existing pipe-column feature) should be retained.",
+      "files": [
+        "frontend/src/components/Game.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

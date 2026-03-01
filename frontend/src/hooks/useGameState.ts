@@ -37,6 +37,7 @@ const PLAYER_SIZE = 48;
 const EASTER_EGG_SCORE = 15;
 const EASTER_EGG_SCORE_5 = 5;
 const EASTER_EGG_SCORE_10 = 10;
+const EASTER_EGG_SCORE_17 = 17;
 const EASTER_EGG_DURATION_MS = 5000;
 const EASTER_EGG_SPEED_FACTOR = 0.05;
 
@@ -47,6 +48,7 @@ export function useGameState() {
   const [isEasterEggActive, setIsEasterEggActive] = useState(false);
   const [isScore5EasterEggActive, setIsScore5EasterEggActive] = useState(false);
   const [isScore10EasterEggActive, setIsScore10EasterEggActive] = useState(false);
+  const [isScore17EasterEggActive, setIsScore17EasterEggActive] = useState(false);
 
   const stateRef = useRef<{
     status: GameStatus;
@@ -83,6 +85,11 @@ export function useGameState() {
   const score10EasterEggStartTimeRef = useRef<number | null>(null);
   const score10EasterEggActiveRef = useRef(false);
 
+  // Score-17 easter egg tracking refs
+  const score17EasterEggTriggeredRef = useRef(false);
+  const score17EasterEggStartTimeRef = useRef<number | null>(null);
+  const score17EasterEggActiveRef = useRef(false);
+
   const flap = useCallback(() => {
     const s = stateRef.current;
     if (s.status === 'idle') {
@@ -116,11 +123,16 @@ export function useGameState() {
     score10EasterEggTriggeredRef.current = false;
     score10EasterEggStartTimeRef.current = null;
     score10EasterEggActiveRef.current = false;
+    // Reset score-17 easter egg state
+    score17EasterEggTriggeredRef.current = false;
+    score17EasterEggStartTimeRef.current = null;
+    score17EasterEggActiveRef.current = false;
     setGameStatus('idle');
     setScore(0);
     setIsEasterEggActive(false);
     setIsScore5EasterEggActive(false);
     setIsScore10EasterEggActive(false);
+    setIsScore17EasterEggActive(false);
   }, []);
 
   const tick = useCallback(() => {
@@ -183,10 +195,29 @@ export function useGameState() {
       setIsEasterEggActive(false);
     }
 
+    // Check if score-17 easter egg should activate
+    if (!score17EasterEggTriggeredRef.current && s.score >= EASTER_EGG_SCORE_17) {
+      score17EasterEggTriggeredRef.current = true;
+      score17EasterEggStartTimeRef.current = now;
+      score17EasterEggActiveRef.current = true;
+      setIsScore17EasterEggActive(true);
+    }
+
+    // Check if score-17 easter egg should deactivate
+    if (
+      score17EasterEggActiveRef.current &&
+      score17EasterEggStartTimeRef.current !== null &&
+      now - score17EasterEggStartTimeRef.current >= EASTER_EGG_DURATION_MS
+    ) {
+      score17EasterEggActiveRef.current = false;
+      setIsScore17EasterEggActive(false);
+    }
+
     const isAnyEasterEggActive =
       easterEggActiveRef.current ||
       score5EasterEggActiveRef.current ||
-      score10EasterEggActiveRef.current;
+      score10EasterEggActiveRef.current ||
+      score17EasterEggActiveRef.current;
     const baseSpeed = OBSTACLE_SPEED_BASE + Math.floor(s.score / 10) * 0.3;
     const speed = isAnyEasterEggActive
       ? baseSpeed * EASTER_EGG_SPEED_FACTOR
@@ -279,6 +310,10 @@ export function useGameState() {
       score10EasterEggActiveRef.current = false;
       setIsScore10EasterEggActive(false);
     }
+    if (score17EasterEggActiveRef.current) {
+      score17EasterEggActiveRef.current = false;
+      setIsScore17EasterEggActive(false);
+    }
   }
 
   return {
@@ -289,6 +324,7 @@ export function useGameState() {
     isEasterEggActive,
     isScore5EasterEggActive,
     isScore10EasterEggActive,
+    isScore17EasterEggActive,
     flap,
     restart,
     tick,

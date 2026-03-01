@@ -1,10 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Add a score-10 easter egg milestone overlay that fires once per game session, matching the style of the existing score-5 and score-15 easter eggs.
+**Goal:** Restore the 3D boy player character and classic Flappy Bird-style pipe obstacles in the Flappy Boy game.
 
 **Planned changes:**
-- Add a score-10 easter egg trigger in `useGameState.ts` that fires only once per game session when the score reaches 10
-- Add the corresponding score-10 overlay display in `GameUI.tsx`, matching the street-art overlay style used by the score-5 and score-15 easter eggs
+- Replace any placeholder player rendering with a 3D dark-skinned boy character using React Three Fiber / Three.js, facing right, with a flap/jump animation on input.
+- Restore standard Flappy Bird vertical pipe obstacles: top pipe descending from the top and bottom pipe rising from the bottom, with a gap between them, scrolling right to left.
+- Style pipes as classic green Flappy Bird columns with a wider cap/lip at the open end.
+- Update collision detection to use pipe column bounding boxes.
+- Retain negative comment text displayed on each pipe column.
+- Preserve the wide gap between pipes from the previous accessibility update.
 
-**User-visible outcome:** When the player reaches a score of 10 for the first time in a session, a street-art style milestone overlay appears, consistent with the existing score-5 and score-15 easter egg overlays.
+**User-visible outcome:** Players see a 3D boy character that flaps and falls with gravity, navigating through classic green pipe obstacles displaying negative comment text, with correct collision detection.

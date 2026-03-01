@@ -12,6 +12,7 @@ interface GameUIProps {
   isEasterEggActive?: boolean;
   isScore5EasterEggActive?: boolean;
   isScore10EasterEggActive?: boolean;
+  isScore17EasterEggActive?: boolean;
 }
 
 export default function GameUI({
@@ -25,6 +26,7 @@ export default function GameUI({
   isEasterEggActive = false,
   isScore5EasterEggActive = false,
   isScore10EasterEggActive = false,
+  isScore17EasterEggActive = false,
 }: GameUIProps) {
   return (
     <div
@@ -240,6 +242,67 @@ export default function GameUI({
         </div>
       )}
 
+      {/* Score-17 easter egg overlay — "looks like im going to have to make this hard for you" */}
+      {isScore17EasterEggActive && gameStatus === 'playing' && (
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 10,
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              textAlign: 'center',
+              padding: '0 16px',
+            }}
+          >
+            {/* Glow backdrop */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: '-20px -30px',
+                background: 'radial-gradient(ellipse at center, rgba(180,0,255,0.35) 0%, transparent 70%)',
+                borderRadius: '50%',
+                filter: 'blur(8px)',
+              }}
+            />
+            <div
+              style={{
+                fontFamily: 'Bangers, cursive',
+                fontSize: 'clamp(1.6rem, 6vw, 2.6rem)',
+                lineHeight: 1.15,
+                color: '#ffd700',
+                textShadow:
+                  '3px 3px 0 #6600aa, -1px -1px 0 #330066, 0 0 24px rgba(200,0,255,0.9), 0 0 48px rgba(255,215,0,0.5)',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                position: 'relative',
+                maxWidth: '420px',
+                wordBreak: 'break-word',
+              }}
+            >
+              looks like im going to have to make this hard for you
+            </div>
+            <div
+              style={{
+                marginTop: '10px',
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: '0.85rem',
+                fontWeight: 800,
+                color: '#d8b4fe',
+                letterSpacing: '0.04em',
+                position: 'relative',
+                textShadow: '1px 1px 0 rgba(0,0,0,0.8)',
+              }}
+            >
+              😈 challenge accepted?
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Start screen */}
       {gameStatus === 'idle' && (
         <div
@@ -275,118 +338,60 @@ export default function GameUI({
             </div>
           </div>
 
-          {/* Subtitle */}
-          <div
-            className="mb-6 px-4 py-1 rounded-full text-center"
-            style={{
-              background: 'rgba(255,107,0,0.2)',
-              border: '1px solid rgba(255,107,0,0.5)',
-              fontFamily: 'Nunito, sans-serif',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#ffb347',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Dodge the hate, keep flying! ✊
-          </div>
-
-          {/* Character preview area */}
-          <div
-            className="mb-6 rounded-2xl p-4 text-center"
-            style={{
-              background: 'rgba(255,107,0,0.1)',
-              border: '2px solid rgba(255,140,0,0.4)',
-            }}
-          >
-            <div style={{ fontSize: '3.5rem' }}>🧒🏿</div>
+          {/* High score */}
+          {highScore > 0 && (
             <div
+              className="mb-4"
               style={{
                 fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.75rem',
+                fontSize: '1rem',
                 fontWeight: 800,
-                color: '#ff8c00',
-                marginTop: '4px',
-              }}
-            >
-              That's you!
-            </div>
-          </div>
-
-          {/* Instructions */}
-          <div
-            className="mb-6 rounded-xl px-5 py-3 text-center"
-            style={{
-              background: 'rgba(0,0,0,0.5)',
-              border: '1px solid rgba(255,140,0,0.3)',
-              maxWidth: '280px',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'Bangers, cursive',
-                fontSize: '1.1rem',
                 color: '#ffd700',
-                letterSpacing: '0.05em',
-                marginBottom: '6px',
+                textShadow: '1px 1px 0 rgba(0,0,0,0.8)',
+                letterSpacing: '0.04em',
               }}
             >
-              HOW TO PLAY
+              BEST: {highScore}
             </div>
-            <div
-              style={{
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                color: '#ffb347',
-                lineHeight: 1.6,
-              }}
-            >
-              🖱️ <strong>Click</strong> or press <strong>SPACE</strong> to fly<br />
-              💬 Dodge the negative comments<br />
-              ⭐ Score points by passing through<br />
-              🏆 Beat your high score!
-            </div>
-          </div>
+          )}
 
           {/* Start button */}
           <button
-            className="animate-pulse-scale"
+            className="pointer-events-auto mt-2 px-8 py-3 rounded-full"
             style={{
               fontFamily: 'Bangers, cursive',
               fontSize: '1.8rem',
               letterSpacing: '0.1em',
-              color: '#1a0a00',
+              color: '#1a0a2e',
               background: 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
-              border: '3px solid #cc2200',
-              borderRadius: '50px',
-              padding: '10px 40px',
+              border: '3px solid #ff6b00',
+              boxShadow: '0 4px 20px rgba(255,140,0,0.6), 0 2px 0 #8b0000',
               cursor: 'pointer',
-              boxShadow: '0 4px 0 #8b0000, 0 0 20px rgba(255,215,0,0.5)',
-              textShadow: '1px 1px 0 rgba(255,255,255,0.3)',
+              animation: 'pulse-scale 1.5s ease-in-out infinite',
             }}
-            onClick={onStart}
+            onClick={e => { e.stopPropagation(); onStart(); }}
           >
-            TAP TO START!
+            TAP TO FLY
           </button>
 
-          {highScore > 0 && (
-            <div
-              className="mt-4"
-              style={{
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.85rem',
-                fontWeight: 800,
-                color: '#ffd700',
-              }}
-            >
-              🏆 Best: {highScore}
-            </div>
-          )}
+          {/* Instructions */}
+          <div
+            className="mt-6 text-center px-8"
+            style={{
+              fontFamily: 'Nunito, sans-serif',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              color: 'rgba(255,215,0,0.7)',
+              lineHeight: 1.6,
+            }}
+          >
+            <div>SPACE / TAP to flap</div>
+            <div>Dodge the haters!</div>
+          </div>
         </div>
       )}
 
-      {/* Game Over screen */}
+      {/* Game over screen */}
       {gameStatus === 'gameover' && (
         <div
           className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
@@ -396,89 +401,95 @@ export default function GameUI({
             style={{
               fontFamily: 'Bangers, cursive',
               fontSize: '3.5rem',
-              color: '#ff3300',
-              textShadow: '3px 3px 0 #8b0000, 0 0 20px rgba(255,50,0,0.7)',
-              letterSpacing: '0.08em',
-              marginBottom: '4px',
+              lineHeight: 1,
+              color: '#ff2200',
+              textShadow: '4px 4px 0 #8b0000, 0 0 20px rgba(255,34,0,0.7)',
+              letterSpacing: '0.06em',
             }}
           >
             GAME OVER
           </div>
 
           <div
-            className="mb-2"
+            className="mt-3 mb-1"
             style={{
               fontFamily: 'Nunito, sans-serif',
-              fontSize: '0.9rem',
+              fontSize: '1rem',
               fontWeight: 800,
-              color: '#ffb347',
+              color: 'rgba(255,215,0,0.8)',
+              letterSpacing: '0.04em',
             }}
           >
-            They got to you... 😔
+            SCORE
           </div>
-
           <div
-            className="mb-1 px-6 py-2 rounded-xl text-center"
             style={{
-              background: 'rgba(255,215,0,0.12)',
-              border: '2px solid rgba(255,215,0,0.4)',
+              fontFamily: 'Bangers, cursive',
+              fontSize: '3rem',
+              color: '#ffd700',
+              textShadow: '3px 3px 0 #cc2200, 0 0 16px rgba(255,215,0,0.6)',
+              letterSpacing: '0.08em',
             }}
           >
-            <div
-              style={{
-                fontFamily: 'Bangers, cursive',
-                fontSize: '1rem',
-                color: '#ffb347',
-                letterSpacing: '0.05em',
-              }}
-            >
-              SCORE
-            </div>
-            <div
-              style={{
-                fontFamily: 'Bangers, cursive',
-                fontSize: '3rem',
-                color: '#ffd700',
-                textShadow: '2px 2px 0 #cc2200',
-                lineHeight: 1,
-              }}
-            >
-              {score}
-            </div>
+            {score}
           </div>
 
           {highScore > 0 && (
             <div
-              className="mb-4"
+              className="mt-1 mb-4"
               style={{
                 fontFamily: 'Nunito, sans-serif',
                 fontSize: '0.85rem',
                 fontWeight: 800,
-                color: score >= highScore ? '#ffd700' : '#ff8c00',
+                color: '#ff8c00',
+                letterSpacing: '0.04em',
               }}
             >
-              {score >= highScore ? '🏆 NEW HIGH SCORE!' : `🏆 Best: ${highScore}`}
+              BEST: {highScore}
             </div>
           )}
 
           <button
+            className="pointer-events-auto mt-2 px-8 py-3 rounded-full"
             style={{
               fontFamily: 'Bangers, cursive',
-              fontSize: '1.6rem',
+              fontSize: '1.8rem',
               letterSpacing: '0.1em',
-              color: '#1a0a00',
+              color: '#1a0a2e',
               background: 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
-              border: '3px solid #cc2200',
-              borderRadius: '50px',
-              padding: '8px 36px',
+              border: '3px solid #ff6b00',
+              boxShadow: '0 4px 20px rgba(255,140,0,0.6), 0 2px 0 #8b0000',
               cursor: 'pointer',
-              boxShadow: '0 4px 0 #8b0000, 0 0 20px rgba(255,215,0,0.5)',
-              textShadow: '1px 1px 0 rgba(255,255,255,0.3)',
             }}
             onClick={onRestart}
           >
-            TRY AGAIN!
+            TRY AGAIN
           </button>
+        </div>
+      )}
+
+      {/* Footer */}
+      {gameStatus === 'idle' && (
+        <div
+          className="absolute bottom-2 left-0 right-0 flex justify-center"
+          style={{
+            fontFamily: 'Nunito, sans-serif',
+            fontSize: '0.65rem',
+            fontWeight: 600,
+            color: 'rgba(255,215,0,0.4)',
+            letterSpacing: '0.03em',
+          }}
+        >
+          Built with ❤️ using{' '}
+          <a
+            href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname || 'unknown-app')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pointer-events-auto ml-1"
+            style={{ color: 'rgba(255,140,0,0.5)', textDecoration: 'underline' }}
+          >
+            caffeine.ai
+          </a>
         </div>
       )}
     </div>

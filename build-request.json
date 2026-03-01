@@ -1,17 +1,60 @@
 {
   "kind": "build_request",
-  "title": "Add score-10 easter egg milestone overlay",
+  "title": "Re-add normal pipe obstacles and 3D boy player character",
+  "projectName": "Flappy Boy",
   "priority": "normal",
-  "requirements": [],
+  "requirements": [
+    {
+      "id": "REQ-14",
+      "text": "Restore the player character as a 3D boy rendered using React Three Fiber / Three.js inside the game canvas. The boy should be a dark-skinned character facing right, with a flapping animation triggered on jump. The character must replace any placeholder or missing player rendering currently in Game.tsx.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "re add the normal pipes and the 3d boy"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The player character is rendered as a 3D boy model or Three.js mesh composite visible on the canvas at all times during gameplay.",
+        "The boy faces right and plays a visible flap/jump animation when the player taps or clicks.",
+        "The character falls with gravity and rises on flap input, consistent with existing physics in useGameState.ts.",
+        "No placeholder shape (e.g., a plain rectangle or circle) is used for the player."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Restore the standard Flappy Bird-style vertical pipe obstacles: each obstacle pair consists of a top rectangular column extending downward from the top of the canvas and a bottom rectangular column extending upward from the bottom, with a gap between them. The pipes should be visually styled as solid, classic green Flappy Bird pipes (with a cap/lip at the open end) and scroll from right to left. Collision detection must match the pipe bounding boxes. The negative comment text displayed on the columns (from the existing pipe-column feature) should be retained.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "re add the normal pipes and the 3d boy"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Obstacle pairs render as two vertical rectangular pipe columns — one descending from the top, one rising from the bottom — with a visible gap in the middle.",
+        "Pipes have a classic Flappy Bird appearance with a wider cap/lip at the open end.",
+        "Pipes scroll continuously from right to left at game speed.",
+        "Collision detection uses the pipe column bounding boxes, not speech bubble shapes.",
+        "Negative comment text from negativeComments.ts is still visible on or within each pipe column.",
+        "The wide gap introduced by the previous accessibility feature is preserved."
+      ]
+    }
+  ],
   "constraints": [
-    "Do not modify any files listed in frontend.immutablePaths.",
-    "This easter egg must be one-shot (fires only once per game session, not every time score 10 is reached).",
-    "Match the exact street-art overlay style used by the score-5 and score-15 easter eggs in useGameState.ts and GameUI.tsx."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "All four easter egg triggers (scores 5, 10, 15, 17) must remain intact and functional.",
+    "The scrolling background image at frontend/public/assets/generated/background.png must continue to be used as the game background."
   ],
   "nonGoals": [
-    "Changing any other game mechanics or scoring logic.",
-    "Adding new assets or images.",
-    "Modifying the score-5 or score-15 easter eggs."
+    "Changing the easter egg messages or timing.",
+    "Replacing the classroom/video-call background image.",
+    "Adding new gameplay mechanics beyond pipes and the boy character.",
+    "Backend changes — all game logic remains client-side."
   ],
   "imageRequirements": {
     "required": [],

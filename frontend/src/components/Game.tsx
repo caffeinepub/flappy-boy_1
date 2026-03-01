@@ -1,375 +1,22 @@
 import React, { useRef, useEffect, useCallback } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrthographicCamera } from '@react-three/drei';
 import { useGameState } from '../hooks/useGameState';
 import GameUI from './GameUI';
+import BoyCharacter from './BoyCharacter';
 
-const CANVAS_WIDTH = 480;
-const CANVAS_HEIGHT = 640;
-const PLAYER_X = 100;
-const PLAYER_SIZE = 48;
-const OBSTACLE_WIDTH = 90;
+const BG_IMG_SRC = '/assets/generated/urban-background.dim_1600x600.png';
 
-// Pipe colors — warm street-art palette
-const PIPE_BODY_FILL = '#cc2200';
-const PIPE_BODY_FILL2 = '#991a00';
-const PIPE_CAP_FILL = '#ff4400';
-const PIPE_CAP_FILL2 = '#cc2200';
-const PIPE_STROKE = '#660e00';
-const PIPE_TEXT_COLOR = '#fff5e0';
-const PIPE_TEXT_SHADOW = '#660e00';
-const PIPE_HIGHLIGHT = 'rgba(255,180,100,0.25)';
-
-// Boy character colors
-const SKIN_COLOR = '#5c3317';
-const SHIRT_COLOR = '#ff6b00';
-const PANTS_COLOR = '#1a3a6b';
-const SHOE_COLOR = '#1a1a1a';
-const HAIR_COLOR = '#1a0a00';
-const EYE_WHITE = '#ffffff';
-const EYE_PUPIL = '#1a0a00';
-
-// Preload the classroom background image
-const bgImage = new Image();
-bgImage.src = '/assets/generated/background.dim_1280x720.png';
-
-function drawBackground(ctx: CanvasRenderingContext2D, bgOffset: number) {
-  if (bgImage.complete && bgImage.naturalWidth > 0) {
-    const imgW = bgImage.naturalWidth;
-    const imgH = bgImage.naturalHeight;
-    const scale = CANVAS_HEIGHT / imgH;
-    const drawW = imgW * scale;
-
-    const scrollX = bgOffset % drawW;
-
-    ctx.drawImage(bgImage, -scrollX, 0, drawW, CANVAS_HEIGHT);
-    ctx.drawImage(bgImage, drawW - scrollX, 0, drawW, CANVAS_HEIGHT);
-
-    if (drawW - scrollX < CANVAS_WIDTH) {
-      ctx.drawImage(bgImage, drawW * 2 - scrollX, 0, drawW, CANVAS_HEIGHT);
-    }
-  } else {
-    ctx.fillStyle = '#c8e0f0';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  }
-
-  // Ground strip at bottom
-  ctx.fillStyle = 'rgba(30, 20, 5, 0.55)';
-  ctx.fillRect(0, CANVAS_HEIGHT - 20, CANVAS_WIDTH, 20);
-  ctx.strokeStyle = '#ff8c00';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, CANVAS_HEIGHT - 20);
-  ctx.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT - 20);
-  ctx.stroke();
-}
-
-function drawBoy(ctx: CanvasRenderingContext2D, x: number, y: number, velocity: number, frame: number) {
-  ctx.save();
-  ctx.translate(x, y);
-
-  const tilt = Math.max(-0.4, Math.min(0.5, velocity * 0.04));
-  ctx.rotate(tilt);
-
-  const s = PLAYER_SIZE;
-  const hs = s / 2;
-
-  // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.3)';
-  ctx.beginPath();
-  ctx.ellipse(0, hs - 2, hs * 0.7, 6, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Legs (animated)
-  const legSwing = Math.sin(frame * 0.3) * 0.3;
-  ctx.strokeStyle = PANTS_COLOR;
-  ctx.lineWidth = 7;
-  ctx.lineCap = 'round';
-
-  // Left leg
-  ctx.save();
-  ctx.rotate(legSwing);
-  ctx.beginPath();
-  ctx.moveTo(-4, hs * 0.3);
-  ctx.lineTo(-6, hs * 0.85);
-  ctx.stroke();
-  ctx.fillStyle = SHOE_COLOR;
-  ctx.beginPath();
-  ctx.ellipse(-8, hs * 0.88, 7, 4, -0.2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // Right leg
-  ctx.save();
-  ctx.rotate(-legSwing);
-  ctx.beginPath();
-  ctx.moveTo(4, hs * 0.3);
-  ctx.lineTo(6, hs * 0.85);
-  ctx.stroke();
-  ctx.fillStyle = SHOE_COLOR;
-  ctx.beginPath();
-  ctx.ellipse(8, hs * 0.88, 7, 4, 0.2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // Body / shirt
-  ctx.fillStyle = SHIRT_COLOR;
-  ctx.beginPath();
-  ctx.roundRect(-hs * 0.55, -hs * 0.1, hs * 1.1, hs * 0.55, 6);
-  ctx.fill();
-
-  // Shirt stripe
-  ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.fillRect(-hs * 0.55, hs * 0.05, hs * 1.1, 5);
-
-  // Arms (animated)
-  const armSwing = Math.sin(frame * 0.3 + Math.PI) * 0.4;
-  ctx.strokeStyle = SKIN_COLOR;
-  ctx.lineWidth = 6;
-  ctx.lineCap = 'round';
-
-  // Left arm
-  ctx.save();
-  ctx.rotate(armSwing);
-  ctx.beginPath();
-  ctx.moveTo(-hs * 0.55, -hs * 0.05);
-  ctx.lineTo(-hs * 0.85, hs * 0.25);
-  ctx.stroke();
-  ctx.restore();
-
-  // Right arm
-  ctx.save();
-  ctx.rotate(-armSwing);
-  ctx.beginPath();
-  ctx.moveTo(hs * 0.55, -hs * 0.05);
-  ctx.lineTo(hs * 0.85, hs * 0.25);
-  ctx.stroke();
-  ctx.restore();
-
-  // Head
-  ctx.fillStyle = SKIN_COLOR;
-  ctx.beginPath();
-  ctx.arc(0, -hs * 0.45, hs * 0.42, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Hair (afro style)
-  ctx.fillStyle = HAIR_COLOR;
-  ctx.beginPath();
-  ctx.arc(0, -hs * 0.6, hs * 0.38, Math.PI, 0);
-  ctx.fill();
-  for (let i = -3; i <= 3; i++) {
-    ctx.beginPath();
-    ctx.arc(i * 5, -hs * 0.72, 7, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Eyes
-  ctx.fillStyle = EYE_WHITE;
-  ctx.beginPath();
-  ctx.ellipse(-7, -hs * 0.45, 5, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(7, -hs * 0.45, 5, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Pupils
-  ctx.fillStyle = EYE_PUPIL;
-  ctx.beginPath();
-  ctx.arc(-6, -hs * 0.45, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(8, -hs * 0.45, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Eye shine
-  ctx.fillStyle = 'white';
-  ctx.beginPath();
-  ctx.arc(-5, -hs * 0.47, 1, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(9, -hs * 0.47, 1, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Smile
-  ctx.strokeStyle = '#3a1a00';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(0, -hs * 0.38, 6, 0.2, Math.PI - 0.2);
-  ctx.stroke();
-
-  // Nose
-  ctx.fillStyle = '#4a2a10';
-  ctx.beginPath();
-  ctx.arc(1, -hs * 0.42, 2, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-/**
- * Draw a single pipe column (top or bottom).
- * For top pipe: extends from y=0 down to y=pipeBottom.
- * For bottom pipe: extends from y=pipeTop down to y=CANVAS_HEIGHT-20.
- */
-function drawPipe(
-  ctx: CanvasRenderingContext2D,
-  pipeX: number,
-  pipeWidth: number,
-  pipeTop: number,
-  pipeBottom: number,
-  isTopPipe: boolean,
-  comment: string
-) {
-  const capHeight = 18;
-  const capOverhang = 8; // how much wider the cap is on each side
-  const capWidth = pipeWidth + capOverhang * 2;
-  const bodyHeight = pipeBottom - pipeTop;
-
-  if (bodyHeight <= 0) return;
-
-  ctx.save();
-
-  // --- Pipe body gradient ---
-  const grad = ctx.createLinearGradient(pipeX - pipeWidth / 2, 0, pipeX + pipeWidth / 2, 0);
-  grad.addColorStop(0, PIPE_BODY_FILL2);
-  grad.addColorStop(0.3, PIPE_BODY_FILL);
-  grad.addColorStop(0.6, PIPE_BODY_FILL);
-  grad.addColorStop(1, PIPE_BODY_FILL2);
-
-  // Draw body
-  ctx.fillStyle = grad;
-  ctx.strokeStyle = PIPE_STROKE;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.rect(pipeX - pipeWidth / 2, pipeTop, pipeWidth, bodyHeight);
-  ctx.fill();
-  ctx.stroke();
-
-  // Highlight stripe on body
-  ctx.fillStyle = PIPE_HIGHLIGHT;
-  ctx.fillRect(pipeX - pipeWidth / 2 + 6, pipeTop, 10, bodyHeight);
-
-  // --- Pipe cap (at the gap-facing end) ---
-  const capGrad = ctx.createLinearGradient(
-    pipeX - capWidth / 2, 0,
-    pipeX + capWidth / 2, 0
-  );
-  capGrad.addColorStop(0, PIPE_CAP_FILL2);
-  capGrad.addColorStop(0.3, PIPE_CAP_FILL);
-  capGrad.addColorStop(0.6, PIPE_CAP_FILL);
-  capGrad.addColorStop(1, PIPE_CAP_FILL2);
-
-  let capY: number;
-  if (isTopPipe) {
-    capY = pipeBottom - capHeight;
-  } else {
-    capY = pipeTop;
-  }
-
-  ctx.fillStyle = capGrad;
-  ctx.strokeStyle = PIPE_STROKE;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.roundRect(
-    pipeX - capWidth / 2,
-    capY,
-    capWidth,
-    capHeight,
-    isTopPipe ? [0, 0, 6, 6] : [6, 6, 0, 0]
-  );
-  ctx.fill();
-  ctx.stroke();
-
-  // Cap highlight
-  ctx.fillStyle = PIPE_HIGHLIGHT;
-  ctx.beginPath();
-  ctx.roundRect(
-    pipeX - capWidth / 2 + 6,
-    capY + 3,
-    10,
-    capHeight - 6,
-    3
-  );
-  ctx.fill();
-
-  // --- Comment text on pipe body ---
-  // Only draw text if body is tall enough
-  const textAreaTop = pipeTop;
-  const textAreaBottom = isTopPipe ? pipeBottom - capHeight : pipeBottom;
-  const textAreaHeight = textAreaBottom - textAreaTop;
-
-  if (textAreaHeight > 30) {
-    ctx.save();
-    // Clip to pipe body so text doesn't overflow
-    ctx.beginPath();
-    ctx.rect(pipeX - pipeWidth / 2, textAreaTop, pipeWidth, textAreaHeight);
-    ctx.clip();
-
-    ctx.fillStyle = PIPE_TEXT_COLOR;
-    ctx.font = 'bold 10px Nunito, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-
-    // Word-wrap
-    const words = comment.split(' ');
-    const lines: string[] = [];
-    let currentLine = '';
-    const maxTextWidth = pipeWidth - 10;
-
-    words.forEach(word => {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      if (ctx.measureText(testLine).width > maxTextWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
-      }
-    });
-    if (currentLine) lines.push(currentLine);
-
-    const lineHeight = 13;
-    const totalTextH = lines.length * lineHeight;
-    // Center text vertically in the text area
-    const startY = textAreaTop + (textAreaHeight - totalTextH) / 2;
-
-    lines.forEach((line, i) => {
-      // Text shadow
-      ctx.fillStyle = PIPE_TEXT_SHADOW;
-      ctx.fillText(line, pipeX + 1, startY + i * lineHeight + 1);
-      ctx.fillStyle = PIPE_TEXT_COLOR;
-      ctx.fillText(line, pipeX, startY + i * lineHeight);
-    });
-
-    ctx.restore();
-  }
-
-  ctx.restore();
-}
-
-function drawObstacles(
-  ctx: CanvasRenderingContext2D,
-  obstacles: ReturnType<typeof useGameState>['stateRef']['current']['obstacles'],
-  obstacleWidth: number
-) {
-  obstacles.forEach(obs => {
-    const topPipeBottom = obs.gapY;
-    const bottomPipeTop = obs.gapY + obs.gapSize;
-    const groundY = CANVAS_HEIGHT - 20;
-
-    // Top pipe: from canvas top (0) down to gapY
-    if (topPipeBottom > 0) {
-      drawPipe(ctx, obs.x, obstacleWidth, 0, topPipeBottom, true, obs.topComment);
-    }
-
-    // Bottom pipe: from gapY+gapSize down to ground
-    if (bottomPipeTop < groundY) {
-      drawPipe(ctx, obs.x, obstacleWidth, bottomPipeTop, groundY, false, obs.bottomComment);
-    }
-  });
-}
+// Classic Flappy Bird pipe colors
+const PIPE_GREEN = '#4EC853';
+const PIPE_GREEN_DARK = '#2E8B2E';
+const PIPE_GREEN_LIGHT = '#6FD96F';
+const PIPE_CAP_EXTRA = 10; // extra width on each side for the cap/lip
 
 export default function Game() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const bgImgRef = useRef<HTMLImageElement | null>(null);
   const animFrameRef = useRef<number>(0);
-  const frameRef = useRef(0);
 
   const {
     stateRef,
@@ -379,81 +26,306 @@ export default function Game() {
     isEasterEggActive,
     isScore5EasterEggActive,
     isScore10EasterEggActive,
+    isScore17EasterEggActive,
     flap,
     restart,
     tick,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
+    PLAYER_X,
+    PLAYER_SIZE,
+    OBSTACLE_WIDTH,
   } = useGameState();
 
-  const handleInput = useCallback(() => {
-    flap();
-  }, [flap]);
-
-  const handleRestart = useCallback(() => {
-    restart();
-  }, [restart]);
-
+  // Preload background image
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const bg = new Image();
+    bg.src = BG_IMG_SRC;
+    bgImgRef.current = bg;
+  }, []);
 
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
-        e.preventDefault();
-        handleInput();
-      }
-    };
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [handleInput]);
-
-  useEffect(() => {
+  const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    const s = stateRef.current;
 
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Draw scrolling background
+    const bgImg = bgImgRef.current;
+    if (bgImg && bgImg.complete) {
+      const bgW = CANVAS_WIDTH;
+      const bgH = CANVAS_HEIGHT;
+      const offset = s.bgOffset % bgW;
+      ctx.drawImage(bgImg, -offset, 0, bgW, bgH);
+      ctx.drawImage(bgImg, bgW - offset, 0, bgW, bgH);
+    } else {
+      const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+      grad.addColorStop(0, '#87CEEB');
+      grad.addColorStop(1, '#228B22');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+
+    // Draw classic green pipes
+    for (const obs of s.obstacles) {
+      const obsLeft = obs.x - OBSTACLE_WIDTH / 2;
+      const topHeight = obs.gapY;
+      const bottomY = obs.gapY + obs.gapSize;
+      const bottomHeight = CANVAS_HEIGHT - bottomY - 20;
+      const capH = 22;
+      const capExtra = PIPE_CAP_EXTRA;
+
+      // ---- TOP PIPE ----
+      if (topHeight > 0) {
+        // Main pipe body
+        ctx.fillStyle = PIPE_GREEN;
+        ctx.fillRect(obsLeft, 0, OBSTACLE_WIDTH, topHeight - capH);
+
+        // Pipe body highlight (left edge)
+        ctx.fillStyle = PIPE_GREEN_LIGHT;
+        ctx.fillRect(obsLeft + 3, 0, 6, topHeight - capH);
+
+        // Pipe body shadow (right edge)
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft + OBSTACLE_WIDTH - 6, 0, 6, topHeight - capH);
+
+        // Cap / lip at the bottom of top pipe
+        ctx.fillStyle = PIPE_GREEN;
+        ctx.fillRect(obsLeft - capExtra, topHeight - capH, OBSTACLE_WIDTH + capExtra * 2, capH);
+
+        // Cap highlight
+        ctx.fillStyle = PIPE_GREEN_LIGHT;
+        ctx.fillRect(obsLeft - capExtra + 3, topHeight - capH, 8, capH);
+
+        // Cap shadow
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft + OBSTACLE_WIDTH + capExtra - 8, topHeight - capH, 8, capH);
+
+        // Cap bottom border
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft - capExtra, topHeight - 3, OBSTACLE_WIDTH + capExtra * 2, 3);
+
+        // Pipe outline
+        ctx.strokeStyle = PIPE_GREEN_DARK;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(obsLeft, 0, OBSTACLE_WIDTH, topHeight - capH);
+        ctx.strokeRect(obsLeft - capExtra, topHeight - capH, OBSTACLE_WIDTH + capExtra * 2, capH);
+
+        // Comment text on top pipe body
+        if (topHeight > 60) {
+          ctx.save();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold 9px Nunito, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur = 3;
+          const maxW = OBSTACLE_WIDTH - 10;
+          const words = obs.topComment.split(' ');
+          let line = '';
+          const lines: string[] = [];
+          for (const word of words) {
+            const test = line ? `${line} ${word}` : word;
+            if (ctx.measureText(test).width > maxW && line) {
+              lines.push(line);
+              line = word;
+            } else {
+              line = test;
+            }
+          }
+          if (line) lines.push(line);
+          const lineH = 11;
+          const textAreaH = topHeight - capH;
+          const startY = textAreaH / 2 - ((lines.length - 1) * lineH) / 2;
+          lines.forEach((l, i) => ctx.fillText(l, obs.x, startY + i * lineH));
+          ctx.restore();
+        }
+      }
+
+      // ---- BOTTOM PIPE ----
+      if (bottomHeight > 0) {
+        // Cap / lip at the top of bottom pipe
+        ctx.fillStyle = PIPE_GREEN;
+        ctx.fillRect(obsLeft - capExtra, bottomY, OBSTACLE_WIDTH + capExtra * 2, capH);
+
+        // Cap highlight
+        ctx.fillStyle = PIPE_GREEN_LIGHT;
+        ctx.fillRect(obsLeft - capExtra + 3, bottomY, 8, capH);
+
+        // Cap shadow
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft + OBSTACLE_WIDTH + capExtra - 8, bottomY, 8, capH);
+
+        // Cap top border
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft - capExtra, bottomY, OBSTACLE_WIDTH + capExtra * 2, 3);
+
+        // Main pipe body
+        ctx.fillStyle = PIPE_GREEN;
+        ctx.fillRect(obsLeft, bottomY + capH, OBSTACLE_WIDTH, bottomHeight - capH);
+
+        // Pipe body highlight
+        ctx.fillStyle = PIPE_GREEN_LIGHT;
+        ctx.fillRect(obsLeft + 3, bottomY + capH, 6, bottomHeight - capH);
+
+        // Pipe body shadow
+        ctx.fillStyle = PIPE_GREEN_DARK;
+        ctx.fillRect(obsLeft + OBSTACLE_WIDTH - 6, bottomY + capH, 6, bottomHeight - capH);
+
+        // Pipe outline
+        ctx.strokeStyle = PIPE_GREEN_DARK;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(obsLeft - capExtra, bottomY, OBSTACLE_WIDTH + capExtra * 2, capH);
+        ctx.strokeRect(obsLeft, bottomY + capH, OBSTACLE_WIDTH, bottomHeight - capH);
+
+        // Comment text on bottom pipe body
+        if (bottomHeight > 60) {
+          ctx.save();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold 9px Nunito, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur = 3;
+          const maxW = OBSTACLE_WIDTH - 10;
+          const words = obs.bottomComment.split(' ');
+          let line = '';
+          const lines: string[] = [];
+          for (const word of words) {
+            const test = line ? `${line} ${word}` : word;
+            if (ctx.measureText(test).width > maxW && line) {
+              lines.push(line);
+              line = word;
+            } else {
+              line = test;
+            }
+          }
+          if (line) lines.push(line);
+          const lineH = 11;
+          const textAreaMidY = bottomY + capH + (bottomHeight - capH) / 2;
+          const startY = textAreaMidY - ((lines.length - 1) * lineH) / 2;
+          lines.forEach((l, i) => ctx.fillText(l, obs.x, startY + i * lineH));
+          ctx.restore();
+        }
+      }
+    }
+
+    // Draw ground
+    ctx.fillStyle = '#3d7a1f';
+    ctx.fillRect(0, CANVAS_HEIGHT - 20, CANVAS_WIDTH, 20);
+    ctx.fillStyle = '#5aaa2e';
+    ctx.fillRect(0, CANVAS_HEIGHT - 22, CANVAS_WIDTH, 3);
+  }, [stateRef, CANVAS_WIDTH, CANVAS_HEIGHT, PLAYER_X, PLAYER_SIZE, OBSTACLE_WIDTH]);
+
+  // Game loop
+  useEffect(() => {
     const loop = () => {
-      frameRef.current++;
-      const s = stateRef.current;
-
       tick();
-
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      drawBackground(ctx, s.bgOffset);
-      drawObstacles(ctx, s.obstacles, OBSTACLE_WIDTH);
-      drawBoy(ctx, PLAYER_X, s.playerY, s.playerVelocity, frameRef.current);
-
+      draw();
       animFrameRef.current = requestAnimationFrame(loop);
     };
-
     animFrameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [tick, stateRef]);
+  }, [tick, draw]);
+
+  // Input handling
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        flap();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [flap]);
+
+  // Compute 3D boy position in normalized Three.js coords
+  // Canvas is CANVAS_WIDTH x CANVAS_HEIGHT pixels
+  // We'll use an orthographic camera matching canvas dimensions
+  const s = stateRef.current;
+  const playerY = s.playerY;
+  const playerVelocity = s.playerVelocity;
+  const tilt = Math.max(-0.5, Math.min(0.5, playerVelocity * 0.04));
+  const isFlapping = playerVelocity < -2;
+
+  // Convert canvas pixel coords to Three.js world coords
+  // Orthographic camera: left=-CANVAS_WIDTH/2, right=CANVAS_WIDTH/2, top=CANVAS_HEIGHT/2, bottom=-CANVAS_HEIGHT/2
+  const boyWorldX = PLAYER_X - CANVAS_WIDTH / 2;
+  const boyWorldY = -(playerY - CANVAS_HEIGHT / 2);
 
   return (
-    <div className="relative flex items-center justify-center w-full h-screen bg-black overflow-hidden">
+    <div
+      className="relative flex items-center justify-center w-full h-full"
+      style={{ background: '#0a0414' }}
+    >
       <div className="relative" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+        {/* 2D background + pipes canvas */}
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="block cursor-pointer"
-          onClick={handleInput}
-          style={{ imageRendering: 'pixelated' }}
+          className="block absolute inset-0"
+          style={{ imageRendering: 'pixelated', zIndex: 1 }}
+          onClick={flap}
+          tabIndex={0}
         />
-        <GameUI
-          gameStatus={gameStatus}
-          score={score}
-          highScore={highScore}
-          onStart={handleInput}
-          onRestart={handleRestart}
-          canvasWidth={CANVAS_WIDTH}
-          canvasHeight={CANVAS_HEIGHT}
-          isEasterEggActive={isEasterEggActive}
-          isScore5EasterEggActive={isScore5EasterEggActive}
-          isScore10EasterEggActive={isScore10EasterEggActive}
-        />
+
+        {/* 3D boy character overlay using React Three Fiber */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 2 }}
+        >
+          <Canvas
+            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
+            gl={{ alpha: true, antialias: true }}
+            onCreated={({ gl }) => {
+              gl.setClearColor(0x000000, 0);
+            }}
+          >
+            <OrthographicCamera
+              makeDefault
+              left={-CANVAS_WIDTH / 2}
+              right={CANVAS_WIDTH / 2}
+              top={CANVAS_HEIGHT / 2}
+              bottom={-CANVAS_HEIGHT / 2}
+              near={0.1}
+              far={1000}
+              position={[0, 0, 100]}
+            />
+            <ambientLight intensity={0.7} />
+            <directionalLight position={[50, 100, 80]} intensity={1.2} />
+            <directionalLight position={[-30, -50, 30]} intensity={0.3} color="#ffaa44" />
+
+            {/* Scale the boy to match PLAYER_SIZE pixels */}
+            <group
+              position={[boyWorldX, boyWorldY, 0]}
+              scale={[PLAYER_SIZE * 1.1, PLAYER_SIZE * 1.1, PLAYER_SIZE * 1.1]}
+            >
+              <BoyCharacter isFlapping={isFlapping} tilt={tilt} />
+            </group>
+          </Canvas>
+        </div>
+
+        {/* UI overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+          <GameUI
+            gameStatus={gameStatus}
+            score={score}
+            highScore={highScore}
+            onStart={flap}
+            onRestart={restart}
+            canvasWidth={CANVAS_WIDTH}
+            canvasHeight={CANVAS_HEIGHT}
+            isEasterEggActive={isEasterEggActive}
+            isScore5EasterEggActive={isScore5EasterEggActive}
+            isScore10EasterEggActive={isScore10EasterEggActive}
+            isScore17EasterEggActive={isScore17EasterEggActive}
+          />
+        </div>
       </div>
     </div>
   );

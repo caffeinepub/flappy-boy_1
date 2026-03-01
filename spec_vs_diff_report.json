@@ -1,17 +1,32 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T21:01:44.511Z",
-  "summary": "The diff implements a score-10 easter egg milestone overlay as described in the build request. The feature is added to useGameState.ts (tracking refs, trigger logic, reset on restart), GameUI.tsx (street-art overlay with 'HOW ARE YOU STILL GOING' text in matching style), and Game.tsx (passing the new prop). Since the build request has no formal REQ-IDs or acceptance criteria, there are no missing requirements to flag. The implementation uses one-shot tracking refs (score10EasterEggTriggeredRef) and resets on restart, consistent with the one-shot constraint.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.82,
+  "generatedAt": "2026-03-01T21:16:41.977Z",
+  "summary": "The diff implements both REQ-14 and REQ-15. REQ-14 is addressed via a new BoyCharacter.tsx component using React Three Fiber / Three.js primitives with dark skin tone, flap animation, and tilt. REQ-15 is addressed in Game.tsx with classic green Flappy Bird-style pipes with caps/lips, scrolling, comment text on pipe bodies, and pipe-based collision. However, the background image source in Game.tsx references 'urban-background.dim_1600x600.png' rather than the required 'background.png'. Additionally, the boy character's facing direction may not be correctly oriented rightward in the 2D side-scrolling context.",
+  "missing_requirements": [
+    {
+      "id": "REQ-14",
+      "requirement": "The boy faces right (character orientation toward the right side of the screen).",
+      "reason": "The BoyCharacter.tsx positions eyes and facial features along the Z-axis (forward-facing toward camera), with no explicit rotation of the root group to orient the character rightward along the side-scrolling plane.",
+      "evidence": [
+        "frontend/src/components/BoyCharacter.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "The background image source in Game.tsx is set to '/assets/generated/urban-background.dim_1600x600.png' instead of the required '/assets/generated/background.png'.",
+      "reason": "The build constraint explicitly states that frontend/public/assets/generated/background.png must continue to be used as the game background, but the diff uses a different image path.",
+      "evidence": [
+        "frontend/src/components/Game.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/BoyCharacter.tsx",
     "frontend/src/components/Game.tsx",
-    "frontend/src/components/GameUI.tsx",
-    "frontend/src/hooks/useGameState.ts",
     "project_state.json"
   ]
 }
