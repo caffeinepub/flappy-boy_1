@@ -1,0 +1,20 @@
+{
+  "kind": "build_request",
+  "title": "Add score-10 easter egg milestone overlay",
+  "priority": "normal",
+  "requirements": [],
+  "constraints": [
+    "Do not modify any files listed in frontend.immutablePaths.",
+    "This easter egg must be one-shot (fires only once per game session, not every time score 10 is reached).",
+    "Match the exact street-art overlay style used by the score-5 and score-15 easter eggs in useGameState.ts and GameUI.tsx."
+  ],
+  "nonGoals": [
+    "Changing any other game mechanics or scoring logic.",
+    "Adding new assets or images.",
+    "Modifying the score-5 or score-15 easter eggs."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

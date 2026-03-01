@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 19,
+  "summary": "Recreate Flappy Bird with a dark-skinned boy character instead of the bird, and negative comment bubbles instead of green pipes.",
+  "architectural_notes": [],
+  "known_issues": [
+    "At score 15, game slows dramatically for ~5 seconds and displays 'aint no way you beat my high score!' text — unintended behavior/bug."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-flappy-bird-style-2d-side-scrolling-game-using-react-three-fiber-three-js-with-a-game-loop-that-handles-gravity-flap-mechanics-collision-detection-scoring-and-game-over-restart-states",
+      "title": "Implement a Flappy Bird-style 2D side-scrolling game using React Three Fiber (Three.js) with a game loop that handles gravity, flap mechanics, collision detection, scoring, and game-over/restart states.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-green-pipe-obstacles-with-pairs-of-speech-bubbles-containing-negative-comment-text-e-g-you-can-t-do-it-give-up-you-re-not-good-enough-bubbles-should-scroll-from-right-to-left-in-pairs-with-a-gap-between-them-for-the-player-to-pass-through",
+      "title": "Replace the green pipe obstacles with pairs of speech bubbles containing negative comment text (e.g., 'You can't do it!', 'Give up!', 'You're not good enough!'). Bubbles should scroll from right to left in pairs with a gap between them for the player to pass through.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-a-vibrant-street-art-inspired-visual-theme-with-a-colorful-urban-background-graffiti-walls-sky-bold-typography-and-energetic-color-palette-warm-tones-yellows-oranges-reds-apply-this-style-consistently-across-the-game-canvas-ui-overlays-score-game-over-screen-start-screen-and-all-text-elements",
+      "title": "Design a vibrant, street-art-inspired visual theme with a colorful urban background (graffiti walls, sky), bold typography, and energetic color palette (warm tones, yellows, oranges, reds). Apply this style consistently across the game canvas, UI overlays (score, game-over screen, start screen), and all text elements.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-uploaded-classroom-video-call-screenshot-image-as-a-static-asset-at-frontend-public-assets-generated-background-png-and-use-it-as-the-scrolling-background-in-the-game-canvas-replacing-the-current-programmatically-drawn-urban-night-background-in-game-tsx",
+      "title": "Add the uploaded classroom/video-call screenshot image as a static asset at frontend/public/assets/generated/background.png and use it as the scrolling background in the game canvas, replacing the current programmatically-drawn urban night background in Game.tsx.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-intentional-game-slowdown-effect-and-aint-no-way-you-beat-my-high-score-overlay-that-triggers-when-the-player-reaches-score-5-this-behavior-is-a-bug-the-game-should-continue-at-normal-speed-with-no-special-message-or-pause-when-score-5-is-reached",
+      "title": "Remove the intentional game-slowdown effect and 'aint no way you beat my high score!' overlay that triggers when the player reaches score 5. This behavior is a bug — the game should continue at normal speed with no special message or pause when score 5 is reached.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-the-negative-comment-bubble-obstacles-to-behave-like-flappy-bird-style-vertical-pipes-each-obstacle-pair-should-consist-of-a-top-column-extending-downward-from-the-top-of-the-canvas-and-a-bottom-column-extending-upward-from-the-bottom-with-a-fixed-gap-between-them-for-the-player-to-pass-through-the-negative-comment-text-should-be-displayed-on-or-within-the-column-shapes-the-columns-should-be-solid-rectangular-and-scroll-from-right-to-left-collision-detection-must-match-the-new-pipe-column-bounding-boxes",
+      "title": "Redesign the negative comment bubble obstacles to behave like Flappy Bird-style vertical pipes: each obstacle pair should consist of a top column extending downward from the top of the canvas and a bottom column extending upward from the bottom, with a fixed gap between them for the player to pass through. The negative comment text should be displayed on or within the column shapes. The columns should be solid, rectangular, and scroll from right to left. Collision detection must match the new pipe-column bounding boxes.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-increase-the-vertical-gap-between-the-top-and-bottom-pipe-columns-in-the-obstacle-pairs-so-the-player-has-significantly-more-space-to-pass-through-the-gap-should-be-noticeably-wider-than-the-current-value-to-make-the-game-more-accessible",
+      "title": "Increase the vertical gap between the top and bottom pipe columns in the obstacle pairs so the player has significantly more space to pass through. The gap should be noticeably wider than the current value to make the game more accessible.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-the-player-s-score-reaches-exactly-15-slow-the-game-speed-to-near-zero-crawl-for-5-seconds-and-display-the-text-aint-no-way-you-beat-my-high-score-prominently-across-the-screen-as-a-full-width-overlay-after-5-seconds-the-game-speed-should-resume-to-normal-and-the-overlay-should-disappear-this-is-an-intentional-feature",
+      "title": "When the player's score reaches exactly 15, slow the game speed to near-zero (crawl) for 5 seconds and display the text 'aint no way you beat my high score!' prominently across the screen as a full-width overlay. After 5 seconds, the game speed should resume to normal and the overlay should disappear. This is an intentional feature.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-the-player-s-score-reaches-exactly-5-slow-the-game-speed-to-near-zero-crawl-for-5-seconds-and-display-the-text-ok-now-you-need-to-stop-prominently-across-the-screen-as-a-full-width-overlay-in-the-same-street-art-style-used-by-the-score-15-easter-egg-after-5-seconds-the-game-speed-should-resume-to-normal-and-the-overlay-should-disappear-this-is-an-intentional-feature-mirroring-the-existing-score-15-easter-egg-implemented-in-usegamestate-ts-and-gameui-tsx",
+      "title": "When the player's score reaches exactly 5, slow the game speed to near-zero (crawl) for 5 seconds and display the text 'ok now, you need to stop' prominently across the screen as a full-width overlay in the same street-art style used by the score-15 easter egg. After 5 seconds, the game speed should resume to normal and the overlay should disappear. This is an intentional feature mirroring the existing score-15 easter egg implemented in useGameState.ts and GameUI.tsx.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-the-player-s-score-reaches-exactly-10-slow-the-game-speed-to-near-zero-crawl-for-5-seconds-and-display-the-text-how-are-you-still-going-prominently-across-the-screen-as-a-full-width-overlay-in-the-same-street-art-style-used-by-the-score-5-and-score-15-easter-eggs-after-5-seconds-the-game-speed-should-resume-to-normal-and-the-overlay-should-disappear-this-is-an-intentional-one-shot-feature-mirroring-the-existing-easter-eggs-implemented-in-usegamestate-ts-and-gameui-tsx",
+      "title": "When the player's score reaches exactly 10, slow the game speed to near-zero (crawl) for 5 seconds and display the text 'HOW ARE YOU STILL GOING?' prominently across the screen as a full-width overlay in the same street-art style used by the score-5 and score-15 easter eggs. After 5 seconds, the game speed should resume to normal and the overlay should disappear. This is an intentional one-shot feature mirroring the existing easter eggs implemented in useGameState.ts and GameUI.tsx.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Flappy Bird clone with dark-skinned boy as the player character",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Replace green pipes with negative comment speech bubbles as obstacles",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Render the player character as a dark-skinned boy illustration (2D sprite) instead of a bird. The character should face right and animate (e.g., slight bounce or rotation) to reflect flapping.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Create all required static image assets: a dark-skinned boy character sprite, a speech bubble obstacle shape, and an urban scrolling background, and serve them from frontend/public/assets/generated.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Update the game background to use a new image provided by the user.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Make the negative comment speech bubble obstacles behave like pipes (i.e., solid vertical pipe-style obstacles with the comment text, similar to Flappy Bird pipes in layout and collision).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Increase the gap between top and bottom pipe columns so the player has more space to pass through.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "At score 15, game slows to a crawl for 5 seconds and displays 'aint no way you beat my high score!' across the screen — this is a bug that needs to be fixed.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "At score 5, slow the game to a near-zero crawl for 5 seconds and display the text 'ok now, you need to stop' prominently across the screen as a full-width overlay. After 5 seconds, resume normal speed and hide the overlay.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "At score 10, slow the game to a near-zero crawl for 5 seconds and display the text 'HOW ARE YOU STILL GOING?' prominently across the screen as a full-width overlay. After 5 seconds, resume normal speed and hide the overlay.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "2d",
+  "projectName": "Flappy Boy",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

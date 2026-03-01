@@ -1,0 +1,30 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add score-10 easter egg milestone overlay",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add a one-shot score-10 easter egg with street-art overlay matching the existing score-5 and score-15 milestone style",
+      "acceptanceCriteria": [
+        "When the player reaches score 10 for the first time in a game session, a street-art-style overlay appears.",
+        "The easter egg fires only once per game session, not on subsequent score-10 occurrences.",
+        "The overlay visual style matches the existing score-5 and score-15 easter eggs.",
+        "Game slows down momentarily when the easter egg triggers, matching existing behavior.",
+        "No files listed in frontend.immutablePaths are modified."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useGameState.ts",
+          "operation": "modify",
+          "description": "Add score10EasterEgg state flag, initialize it to false in resetGame, and add a one-shot trigger when score reaches 10 that sets the flag to true and applies the same slowdown effect (gameSpeed *= 0.3) used by score-5 and score-15 easter eggs."
+        },
+        {
+          "path": "frontend/src/components/GameUI.tsx",
+          "operation": "modify",
+          "description": "Add a new conditional street-art overlay section that displays when score10EasterEgg is true, using the same visual structure, Tailwind classes, and typography styles as the existing score-5 and score-15 easter egg overlays."
+        }
+      ]
+    }
+  ]
+}
