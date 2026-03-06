@@ -1,6 +1,8 @@
 import React from "react";
 import type { GameStatus } from "../hooks/useGameState";
 
+const ADMIN_LEVELS = [0, 1, 2, 3, 4, 5, 10, 15, 17, 20, 21];
+
 interface GameUIProps {
   gameStatus: GameStatus;
   score: number;
@@ -15,6 +17,14 @@ interface GameUIProps {
   isScore17EasterEggActive?: boolean;
   isScore20EasterEggActive?: boolean;
   isLevel21Active?: boolean;
+  // Auth + admin props
+  isAuthenticated?: boolean;
+  isAdmin?: boolean;
+  selectedLevel?: number;
+  loginStatus?: string;
+  onLogin?: () => void;
+  onLogout?: () => void;
+  onSelectLevel?: (level: number) => void;
 }
 
 export default function GameUI({
@@ -31,12 +41,60 @@ export default function GameUI({
   isScore17EasterEggActive = false,
   isScore20EasterEggActive = false,
   isLevel21Active = false,
+  isAuthenticated = false,
+  isAdmin = false,
+  selectedLevel = 0,
+  loginStatus = "idle",
+  onLogin,
+  onLogout,
+  onSelectLevel,
 }: GameUIProps) {
+  const isLoggingIn = loginStatus === "logging-in";
+
   return (
     <div
       className="absolute inset-0 pointer-events-none select-none"
       style={{ width: canvasWidth, height: canvasHeight }}
     >
+      {/* Login / Logout button — floating top-right */}
+      <div
+        className="absolute top-2 right-2 pointer-events-auto"
+        style={{ zIndex: 20 }}
+      >
+        <button
+          type="button"
+          data-ocid="auth.button"
+          disabled={isLoggingIn}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isAuthenticated) {
+              onLogout?.();
+            } else {
+              onLogin?.();
+            }
+          }}
+          style={{
+            fontFamily: "Nunito, sans-serif",
+            fontSize: "0.7rem",
+            fontWeight: 800,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: isAuthenticated ? "#ff8c00" : "#ffd700",
+            background: "rgba(10,4,20,0.75)",
+            border: `1px solid ${isAuthenticated ? "rgba(255,140,0,0.4)" : "rgba(255,215,0,0.3)"}`,
+            borderRadius: "6px",
+            padding: "4px 10px",
+            cursor: isLoggingIn ? "default" : "pointer",
+            opacity: isLoggingIn ? 0.6 : 1,
+            backdropFilter: "blur(4px)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+            transition: "all 0.2s ease",
+          }}
+        >
+          {isLoggingIn ? "Logging in..." : isAuthenticated ? "Logout" : "Login"}
+        </button>
+      </div>
+
       {/* Score display during gameplay */}
       {gameStatus === "playing" && (
         <div className="absolute top-4 left-0 right-0 flex justify-center">
@@ -527,6 +585,77 @@ export default function GameUI({
             <div>SPACE / TAP to flap</div>
             <div>Dodge the haters!</div>
           </div>
+
+          {/* Admin level picker — only visible to admin on idle screen */}
+          {isAdmin && (
+            <div
+              data-ocid="admin.level_picker.panel"
+              className="pointer-events-auto mt-5"
+              style={{
+                background: "rgba(10,4,20,0.88)",
+                border: "1px solid rgba(255,140,0,0.35)",
+                borderRadius: "10px",
+                padding: "10px 14px",
+                maxWidth: "340px",
+                width: "100%",
+                boxShadow:
+                  "0 4px 20px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,215,0,0.06)",
+              }}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              <div
+                style={{
+                  fontFamily: "Nunito, sans-serif",
+                  fontSize: "0.62rem",
+                  fontWeight: 800,
+                  color: "#ff8c00",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  marginBottom: "8px",
+                  textShadow: "0 0 8px rgba(255,140,0,0.5)",
+                }}
+              >
+                ⚙ ADMIN: Start from level
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {ADMIN_LEVELS.map((lvl, idx) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    data-ocid={`admin.level.item.${idx + 1}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectLevel?.(lvl);
+                    }}
+                    style={{
+                      fontFamily: "Bangers, cursive",
+                      fontSize: "1rem",
+                      letterSpacing: "0.05em",
+                      color: selectedLevel === lvl ? "#1a0a2e" : "#ffd700",
+                      background:
+                        selectedLevel === lvl
+                          ? "linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)"
+                          : "rgba(255,215,0,0.08)",
+                      border: `1.5px solid ${selectedLevel === lvl ? "#ff8c00" : "rgba(255,215,0,0.25)"}`,
+                      borderRadius: "6px",
+                      padding: "3px 10px",
+                      cursor: "pointer",
+                      minWidth: "36px",
+                      textAlign: "center",
+                      transition: "all 0.15s ease",
+                      boxShadow:
+                        selectedLevel === lvl
+                          ? "0 2px 10px rgba(255,140,0,0.5)"
+                          : "none",
+                    }}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

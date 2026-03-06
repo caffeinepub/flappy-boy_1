@@ -76,7 +76,7 @@ const makeDefaultEyeBoss = (): EyeBossState => ({
   eyeScale: 0,
 });
 
-export function useGameState() {
+export function useGameState(initialScore = 0) {
   const [gameStatus, setGameStatus] = useState<GameStatus>("idle");
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
@@ -145,11 +145,36 @@ export function useGameState() {
     if (s.status === "idle") {
       s.status = "playing";
       s.playerVelocity = FLAP_STRENGTH;
+      // Apply initial score when starting from a chosen level
+      if (initialScore > 0) {
+        s.score = initialScore;
+        setScore(initialScore);
+        // Mark all easter eggs below initialScore as already triggered
+        if (initialScore >= EASTER_EGG_SCORE_5) {
+          score5EasterEggTriggeredRef.current = true;
+        }
+        if (initialScore >= EASTER_EGG_SCORE_10) {
+          score10EasterEggTriggeredRef.current = true;
+        }
+        if (initialScore >= EASTER_EGG_SCORE) {
+          easterEggTriggeredRef.current = true;
+        }
+        if (initialScore >= EASTER_EGG_SCORE_17) {
+          score17EasterEggTriggeredRef.current = true;
+        }
+        if (initialScore >= EASTER_EGG_SCORE_20) {
+          score20EasterEggTriggeredRef.current = true;
+        }
+        if (initialScore >= LEVEL_21_SCORE) {
+          level21TriggeredRef.current = true;
+          setIsLevel21Active(true);
+        }
+      }
       setGameStatus("playing");
     } else if (s.status === "playing") {
       s.playerVelocity = FLAP_STRENGTH;
     }
-  }, []);
+  }, [initialScore]);
 
   const restart = useCallback(() => {
     const s = stateRef.current;

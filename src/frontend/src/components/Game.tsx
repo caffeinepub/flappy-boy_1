@@ -16,7 +16,27 @@ const SKIN_MID = "#8B5E3C";
 const SKIN_SHADOW = "#4A2518";
 const HAIR_COLOR = "#1A0A05";
 
-export default function Game() {
+interface GameProps {
+  startLevel?: number;
+  isAuthenticated?: boolean;
+  isAdmin?: boolean;
+  selectedLevel?: number;
+  loginStatus?: string;
+  onLogin?: () => void;
+  onLogout?: () => void;
+  onSelectLevel?: (level: number) => void;
+}
+
+export default function Game({
+  startLevel = 0,
+  isAuthenticated = false,
+  isAdmin = false,
+  selectedLevel = 0,
+  loginStatus = "idle",
+  onLogin,
+  onLogout,
+  onSelectLevel,
+}: GameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bgImgRef = useRef<HTMLImageElement | null>(null);
   const animFrameRef = useRef<number>(0);
@@ -44,7 +64,7 @@ export default function Game() {
     PLAYER_SIZE,
     OBSTACLE_WIDTH,
     LASER_HEIGHT,
-  } = useGameState();
+  } = useGameState(startLevel);
 
   // Preload background image
   useEffect(() => {
@@ -854,6 +874,13 @@ export default function Game() {
             isScore17EasterEggActive={isScore17EasterEggActive}
             isScore20EasterEggActive={isScore20EasterEggActive}
             isLevel21Active={isLevel21Active}
+            isAuthenticated={isAuthenticated}
+            isAdmin={isAdmin}
+            selectedLevel={selectedLevel}
+            loginStatus={loginStatus}
+            onLogin={onLogin}
+            onLogout={onLogout}
+            onSelectLevel={onSelectLevel}
           />
         </div>
       </div>
