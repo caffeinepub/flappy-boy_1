@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Warm street-art palette */
+    --background: 0.18 0.04 60;
+    --foreground: 0.97 0.02 80;
+    --card: 0.22 0.05 55;
+    --card-foreground: 0.97 0.02 80;
+    --popover: 0.22 0.05 55;
+    --popover-foreground: 0.97 0.02 80;
+    --primary: 0.72 0.22 50;
+    --primary-foreground: 0.1 0.02 30;
+    --secondary: 0.65 0.2 30;
+    --secondary-foreground: 0.97 0.02 80;
+    --muted: 0.28 0.04 55;
+    --muted-foreground: 0.7 0.05 70;
+    --accent: 0.8 0.18 85;
+    --accent-foreground: 0.1 0.02 30;
+    --destructive: 0.6 0.25 25;
+    --destructive-foreground: 0.97 0.02 80;
+    --border: 0.35 0.06 55;
+    --input: 0.35 0.06 55;
+    --ring: 0.72 0.22 50;
+    --chart-1: 0.72 0.22 50;
+    --chart-2: 0.65 0.2 30;
+    --chart-3: 0.8 0.18 85;
+    --chart-4: 0.6 0.25 25;
+    --chart-5: 0.55 0.2 200;
+    --sidebar: 0.22 0.05 55;
+    --sidebar-foreground: 0.97 0.02 80;
+    --sidebar-primary: 0.72 0.22 50;
+    --sidebar-primary-foreground: 0.1 0.02 30;
+    --sidebar-accent: 0.28 0.04 55;
+    --sidebar-accent-foreground: 0.97 0.02 80;
+    --sidebar-border: 0.35 0.06 55;
+    --sidebar-ring: 0.72 0.22 50;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Nunito", sans-serif;
+    overflow: hidden;
+  }
+}
