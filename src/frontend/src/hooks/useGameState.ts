@@ -90,6 +90,9 @@ export function useGameState(initialScore = 0) {
     useState(false);
   const [isLevel21Active, setIsLevel21Active] = useState(false);
 
+  // Ref that mirrors isLevel21Active so draw() can read it without a stale closure
+  const isLevel21ActiveRef = useRef(false);
+
   const stateRef = useRef<{
     status: GameStatus;
     playerY: number;
@@ -167,6 +170,7 @@ export function useGameState(initialScore = 0) {
         }
         if (initialScore >= LEVEL_21_SCORE) {
           level21TriggeredRef.current = true;
+          isLevel21ActiveRef.current = true;
           setIsLevel21Active(true);
         }
       }
@@ -209,6 +213,7 @@ export function useGameState(initialScore = 0) {
     score20EasterEggActiveRef.current = false;
     // Reset level-21 state
     level21TriggeredRef.current = false;
+    isLevel21ActiveRef.current = false;
     setGameStatus("idle");
     setScore(0);
     setIsEasterEggActive(false);
@@ -362,6 +367,7 @@ export function useGameState(initialScore = 0) {
           eyeX: CANVAS_WIDTH + 110,
           eyeScale: 0,
         };
+        isLevel21ActiveRef.current = true;
         setIsLevel21Active(true);
       }
 
@@ -524,6 +530,7 @@ export function useGameState(initialScore = 0) {
     isScore17EasterEggActive,
     isScore20EasterEggActive,
     isLevel21Active,
+    isLevel21ActiveRef,
     flap,
     restart,
     tick,

@@ -55,6 +55,7 @@ export default function Game({
     isScore17EasterEggActive,
     isScore20EasterEggActive,
     isLevel21Active,
+    isLevel21ActiveRef,
     flap,
     restart,
     tick,
@@ -73,6 +74,8 @@ export default function Game({
     bgImgRef.current = bg;
   }, []);
 
+  // draw is stable — it reads isLevel21ActiveRef.current inline instead of
+  // capturing isLevel21Active state, preventing stale-closure loop restarts.
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -81,6 +84,8 @@ export default function Game({
     const s = stateRef.current;
     const eye = s.eyeBoss;
     const now = performance.now();
+    // Read the ref inline — always fresh, never causes re-render
+    const level21 = isLevel21ActiveRef.current;
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -101,7 +106,7 @@ export default function Game({
     }
 
     // Draw classic green pipes (skip in level 21)
-    if (!isLevel21Active) {
+    if (!level21) {
       for (const obs of s.obstacles) {
         const obsLeft = obs.x - OBSTACLE_WIDTH / 2;
         const topHeight = obs.gapY;
@@ -302,11 +307,7 @@ export default function Game({
     }
 
     // ---- LEVEL 21: Giant Eye Boss ----
-    if (
-      isLevel21Active &&
-      eye.phase !== "inactive" &&
-      eye.phase !== "waiting"
-    ) {
+    if (level21 && eye.phase !== "inactive" && eye.phase !== "waiting") {
       const ex = eye.eyeX;
       const ey = CANVAS_HEIGHT / 2;
       const scale = eye.eyeScale;
@@ -592,7 +593,7 @@ export default function Game({
     ctx.fillStyle = "#5aaa2e";
     ctx.fillRect(0, CANVAS_HEIGHT - 22, CANVAS_WIDTH, 3);
 
-    // ---- Draw 2D player character (dark-skinned) ----
+    // ---- Draw 2D player character (dark-skinned boy) ----
     const px = PLAYER_X;
     const py = s.playerY;
     const r = PLAYER_SIZE / 2;
@@ -788,13 +789,13 @@ export default function Game({
     ctx.restore();
   }, [
     stateRef,
+    isLevel21ActiveRef,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     PLAYER_X,
     PLAYER_SIZE,
     OBSTACLE_WIDTH,
     LASER_HEIGHT,
-    isLevel21Active,
   ]);
 
   // Game loop — also tick down the flapFlashRef timer
@@ -853,6 +854,7 @@ export default function Game({
             if (e.key === "Enter" || e.key === " ") handleCanvasClick();
           }}
           tabIndex={0}
+          data-ocid="game.canvas_target"
         />
 
         {/* UI overlay */}
